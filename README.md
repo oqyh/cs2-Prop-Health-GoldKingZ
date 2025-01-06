@@ -46,6 +46,7 @@
   "Default_Health": -1,
 
   //Color Of The Prop
+  //Color Must Be A R G P Try This Site https://rgbcolorpicker.com/
   //(-1) = No Color
   "Prop_Color_Argb": "255 0 0 255",
 
