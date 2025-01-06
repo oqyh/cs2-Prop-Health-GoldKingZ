@@ -14,6 +14,7 @@
 
 [CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/releases)
 
+[Newtonsoft.Json](https://www.nuget.org/packages/Newtonsoft.Json)
 
 ## .:[ Configuration ]:.
 
