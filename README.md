@@ -2,11 +2,13 @@
 <a href="https://discord.com/invite/U7AuQhu"><img src="https://discord.com/api/guilds/651838917687115806/widget.png?style=banner2"></a>
 
 ***
-# [CS2] Prop-Health-GoldKingZ (1.0.0)
+# [CS2] Prop-Health-GoldKingZ (1.0.1)
 
 ### Prop Health
 
 ![prop_health](https://github.com/user-attachments/assets/2f1246f4-efce-4fe9-bceb-8ba42f5de78e)
+
+![prop_stylenew](https://github.com/user-attachments/assets/c230a401-596c-458d-86a0-c9b0a129959c)
 
 
 ## .:[ Dependencies ]:.
@@ -60,6 +62,8 @@
   //(1) = Chat
   //(2) = Center 
   //(3) = Bottom Center 
+  //(4) = Center (Bar Icon)
+  //(5) = Bottom Center (Bar Icon)
   //(After : Is Duration In Secs Of Center Or Bottom Center) 
   "Prop_Damge_Print": "1,2:10",
 
@@ -99,6 +103,10 @@
 
 ## .:[ Change Log ]:.
 ```
+(1.0.1)
+-Added Prop_Damge_Print 4 Center (Bar Icon)
+-Added Prop_Damge_Print 5 Bottom Center (Bar Icon)
+
 (1.0.0)
 -Initial Release
 ```
