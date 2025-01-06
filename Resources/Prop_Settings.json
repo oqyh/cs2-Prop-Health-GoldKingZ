@@ -1,0 +1,54 @@
+﻿{
+	"models/props/cs_office/vending_machine.vmdl":
+	{
+		"Prop_Health": 500,
+	},
+	"models/props/cs_office/sofa.vmdl":
+	{
+		"Prop_Health": 300,
+	},
+	"models/props/cs_office/bookshelf1.vmdl":
+	{
+		"Prop_Health": 300
+	},
+	"models/props/cs_office/sofa_chair.vmdl":
+	{
+		"Prop_Health": 300,
+	},
+	"models/props/cs_office/Table_coffee.vmdl":
+	{
+		"Prop_Health": 300,
+	},
+	"models/props/cs_office/Table_meeting.vmdl":
+	{
+		"Prop_Health": 300,
+	},
+	"models/props/cs_office/Shelves_metal.vmdl":
+	{
+		"Prop_Health": 300,
+	},
+	"models/props/cs_office/Shelves_metal1.vmdl":
+	{
+		"Prop_Health": 300,
+	},
+	"models/props/cs_office/Shelves_metal2.vmdl":
+	{
+		"Prop_Health": 300,
+	},
+	"models/props/cs_office/Shelves_metal3.vmdl":
+	{
+		"Prop_Health": 300,
+	},
+	"models/props/cs_office/file_cabinet1.vmdl":
+	{
+		"Prop_Health": 300,
+	},
+	"models/props/cs_office/file_cabinet3.vmdl":
+	{
+		"Prop_Health": 300,
+	},
+	"models/props/cs_office/microwave.vmdl":
+	{
+		"Prop_Health": 300,
+	}
+}
