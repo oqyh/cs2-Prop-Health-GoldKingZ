@@ -21,17 +21,17 @@ namespace Prop_Health_GoldKingZ;
 public class PropHealthGoldKingZ : BasePlugin
 {
     public override string ModuleName => "Prop Health";
-    public override string ModuleVersion => "1.0.0";
+    public override string ModuleVersion => "1.0.1";
     public override string ModuleAuthor => "Gold KingZ";
     public override string ModuleDescription => "https://github.com/oqyh";
-	internal static IStringLocalizer? Stringlocalizer;
-	public static PropHealthGoldKingZ Instance { get; set; } = new();
+    internal static IStringLocalizer? Stringlocalizer;
+    public static PropHealthGoldKingZ Instance { get; set; } = new();
     public Globals g_Main = new();
     private readonly PlayerChat _PlayerChat = new();
 
     public override void Load(bool hotReload)
     {
-		Instance = this;
+        Instance = this;
         Configs.Load(ModuleDirectory);
         Stringlocalizer = Localizer;
         Configs.Shared.CookiesModule = ModuleDirectory;
@@ -45,7 +45,7 @@ public class PropHealthGoldKingZ : BasePlugin
         Helper.SetValues();
 
         RegisterListener<Listeners.OnTick>(OnTick);
-		RegisterListener<Listeners.OnMapEnd>(OnMapEnd);
+        RegisterListener<Listeners.OnMapEnd>(OnMapEnd);
         RegisterListener<Listeners.OnEntityCreated>(OnEntityCreated);
         RegisterListener<Listeners.OnEntitySpawned>(OnEntitySpawned);
         RegisterEventHandler<EventPlayerConnectFull>(OnEventPlayerConnectFull);
@@ -53,14 +53,22 @@ public class PropHealthGoldKingZ : BasePlugin
 
         AddCommandListener("say", OnPlayerChat, HookMode.Post);
         AddCommandListener("say_team", OnPlayerChatTeam, HookMode.Post);
-
+        //HookEntityOutput("weapon_knife","OnPlayerPickup",OnPlayerPickup,HookMode.Post);
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Hook(OnTakeDamage, HookMode.Post);
     }
+    
     public override void Unload(bool hotReload)
     {
         Helper.ClearVariables();
         VirtualFunctions.CBaseEntity_TakeDamageOldFunc.Unhook(OnTakeDamage, HookMode.Post);
+        //UnhookEntityOutput("weapon_knife","OnPlayerPickup",OnPlayerPickup,HookMode.Post);
     }
+
+    /* public HookResult OnPlayerPickup(CEntityIOOutput output, string name, CEntityInstance activator, CEntityInstance caller, CVariant value, float delay)
+    {
+        Server.PrintToConsole($"weapon_knife called OnPlayerPickup ({name}, {activator}, {caller}, {delay})");
+        return HookResult.Continue;
+    } */
 
     public HookResult OnEventPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)
     {
@@ -71,7 +79,7 @@ public class PropHealthGoldKingZ : BasePlugin
 
         if(!g_Main.Attacker_Damage.ContainsKey(player))
         {
-            g_Main.Attacker_Damage.Add(player, new Globals.GetAttacker(player,0,false,0,false,0,DateTime.Now));
+            g_Main.Attacker_Damage.Add(player, new Globals.GetAttacker(player,0,0,0,0,0,0,DateTime.Now));
         }
 
         return HookResult.Continue;
@@ -99,7 +107,7 @@ public class PropHealthGoldKingZ : BasePlugin
             var players = playerData.Attacker;
             if (players == null || !players.IsValid) continue;
 
-            if(playerData.Show_Center_Now)
+            if(playerData.Show_Center_Now == 1 || playerData.Show_Center_Now == 2)
             {
                 TimeSpan elapsedTime = DateTime.Now - playerData.LastTickTime;
                 if (elapsedTime.TotalSeconds >= 1)
@@ -109,19 +117,114 @@ public class PropHealthGoldKingZ : BasePlugin
                         playerData.Show_Center_Now_Server -= 1;
                     }else if (playerData.Show_Center_Now_Server <= 1)
                     {
-                        playerData.Show_Center_Now = false;
+                        playerData.Show_Center_Now = 0;
                     }
                     
                     playerData.LastTickTime = DateTime.Now;
                 }
                 StringBuilder builder = new StringBuilder();
-                string localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health", playerData.Entity_Health<1?0:playerData.Entity_Health];
+
+                string localizeduse;
+                if(playerData.Show_Center_Now == 1)
+                {
+                    localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health", playerData.Entity_Health<1?0:playerData.Entity_Health];
+                }else
+                {
+                    int health_max = playerData.Entity_Health_Max;
+                    int health = playerData.Entity_Health<1?0:playerData.Entity_Health;
+                    int roundedHealthPercentage = (int)Math.Round((float)health / health_max * 100);
+
+                    if (roundedHealthPercentage >= 100)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.100"];
+                    }
+                    else if (roundedHealthPercentage >= 95)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.95"];
+                    }
+                    else if (roundedHealthPercentage >= 90)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.90"];
+                    }
+                    else if (roundedHealthPercentage >= 85)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.85"];
+                    }
+                    else if (roundedHealthPercentage >= 80)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.80"];
+                    }
+                    else if (roundedHealthPercentage >= 75)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.75"];
+                    }
+                    else if (roundedHealthPercentage >= 70)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.70"];
+                    }
+                    else if (roundedHealthPercentage >= 65)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.65"];
+                    }
+                    else if (roundedHealthPercentage >= 60)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.60"];
+                    }
+                    else if (roundedHealthPercentage >= 55)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.55"];
+                    }
+                    else if (roundedHealthPercentage >= 50)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.50"];
+                    }
+                    else if (roundedHealthPercentage >= 45)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.45"];
+                    }
+                    else if (roundedHealthPercentage >= 40)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.40"];
+                    }
+                    else if (roundedHealthPercentage >= 35)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.35"];
+                    }
+                    else if (roundedHealthPercentage >= 30)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.30"];
+                    }
+                    else if (roundedHealthPercentage >= 25)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.25"];
+                    }
+                    else if (roundedHealthPercentage >= 20)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.20"];
+                    }
+                    else if (roundedHealthPercentage >= 15)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.15"];
+                    }
+                    else if (roundedHealthPercentage >= 10)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.10"];
+                    }
+                    else if (roundedHealthPercentage >= 5)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.5"];
+                    }
+                    else
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.0"];
+                    }
+                }
                 builder.AppendFormat(localizeduse);
                 var centerhtml = builder.ToString();
                 players.PrintToCenterHtml(centerhtml);
             }
 
-            if(playerData.ShowBottom_Now)
+            if(playerData.ShowBottom_Now == 1 || playerData.ShowBottom_Now == 2)
             {
                 TimeSpan elapsedTime = DateTime.Now - playerData.LastTickTime;
                 if (elapsedTime.TotalSeconds >= 1)
@@ -131,13 +234,109 @@ public class PropHealthGoldKingZ : BasePlugin
                         playerData.ShowBottom_Now_Server -= 1;
                     }else if (playerData.ShowBottom_Now_Server <= 1)
                     {
-                        playerData.ShowBottom_Now = false;
+                        playerData.ShowBottom_Now = 0;
                     }
                     
                     playerData.LastTickTime = DateTime.Now;
                 }
                 StringBuilder builder = new StringBuilder();
-                string localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health", playerData.Entity_Health<1?0:playerData.Entity_Health];
+
+                string localizeduse;
+                if(playerData.ShowBottom_Now == 1)
+                {
+                    localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health", playerData.Entity_Health<1?0:playerData.Entity_Health];
+                }else
+                {
+                    int health_max = playerData.Entity_Health_Max;
+                    int health = playerData.Entity_Health<1?0:playerData.Entity_Health;
+                    int roundedHealthPercentage = (int)Math.Round((float)health / health_max * 100);
+
+                    if (roundedHealthPercentage >= 100)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.100"];
+                    }
+                    else if (roundedHealthPercentage >= 95)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.95"];
+                    }
+                    else if (roundedHealthPercentage >= 90)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.90"];
+                    }
+                    else if (roundedHealthPercentage >= 85)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.85"];
+                    }
+                    else if (roundedHealthPercentage >= 80)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.80"];
+                    }
+                    else if (roundedHealthPercentage >= 75)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.75"];
+                    }
+                    else if (roundedHealthPercentage >= 70)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.70"];
+                    }
+                    else if (roundedHealthPercentage >= 65)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.65"];
+                    }
+                    else if (roundedHealthPercentage >= 60)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.60"];
+                    }
+                    else if (roundedHealthPercentage >= 55)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.55"];
+                    }
+                    else if (roundedHealthPercentage >= 50)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.50"];
+                    }
+                    else if (roundedHealthPercentage >= 45)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.45"];
+                    }
+                    else if (roundedHealthPercentage >= 40)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.40"];
+                    }
+                    else if (roundedHealthPercentage >= 35)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.35"];
+                    }
+                    else if (roundedHealthPercentage >= 30)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.30"];
+                    }
+                    else if (roundedHealthPercentage >= 25)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.25"];
+                    }
+                    else if (roundedHealthPercentage >= 20)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.20"];
+                    }
+                    else if (roundedHealthPercentage >= 15)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.15"];
+                    }
+                    else if (roundedHealthPercentage >= 10)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.10"];
+                    }
+                    else if (roundedHealthPercentage >= 5)
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.5"];
+                    }
+                    else
+                    {
+                        localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.0"];
+                    }
+                }
+                
                 builder.AppendFormat(localizeduse);
                 var centerhtml = builder.ToString();
                 players.PrintToCenter(centerhtml);
@@ -176,7 +375,6 @@ public class PropHealthGoldKingZ : BasePlugin
         {
             Entity(entity, false);
         }
-        
     }
     public void Entity(CEntityInstance entity, bool OnEntityCreated)
     {
@@ -189,7 +387,7 @@ public class PropHealthGoldKingZ : BasePlugin
         {
             int health = Configs.GetConfigData().Default_Health;
 
-            g_Main.Entitys.Add(entity, new Globals.GetEnt(entity,null!,health,string.Empty));
+            g_Main.Entitys.Add(entity, new Globals.GetEnt(entity,null!,health,health,string.Empty));
         }
 
         if(g_Main.Entitys.ContainsKey(entity) && !string.IsNullOrEmpty(entitypath))
@@ -226,6 +424,7 @@ public class PropHealthGoldKingZ : BasePlugin
                         }
 
                         g_Main.Entitys[entity].Target_Entity = entity;
+                        g_Main.Entitys[entity].Entity_Health_Max = I_health;
                         g_Main.Entitys[entity].Entity_Health = I_health;
                         g_Main.Entitys[entity].Entity_Path = entitypath;
                         Helper.StartHighlightEnt(g_Main.Entitys[entity].Target_Entity);
@@ -292,6 +491,7 @@ public class PropHealthGoldKingZ : BasePlugin
                 var damagedone = damageinfo.TotalledDamage;
                 g_Main.Entitys[ent].Entity_Health -= (int)Math.Round(damagedone);
                 g_Main.Attacker_Damage[player].Entity_Health = g_Main.Entitys[ent].Entity_Health;
+                g_Main.Attacker_Damage[player].Entity_Health_Max = g_Main.Entitys[ent].Entity_Health_Max;
 
                 string input = Configs.GetConfigData().Prop_Damge_Print;
                 string[] inputParts = input.Split(':');
@@ -311,14 +511,28 @@ public class PropHealthGoldKingZ : BasePlugin
                 if (inputParts[0].Split(',').Contains("2"))
                 {
                     g_Main.Attacker_Damage[player].Show_Center_Now_Server = duration;
-                    g_Main.Attacker_Damage[player].Show_Center_Now = true;
+                    g_Main.Attacker_Damage[player].Show_Center_Now = 1;
                     g_Main.Attacker_Damage[player].LastTickTime = DateTime.Now;
                 }
 
                 if (inputParts[0].Split(',').Contains("3"))
                 {
                     g_Main.Attacker_Damage[player].ShowBottom_Now_Server = duration;
-                    g_Main.Attacker_Damage[player].ShowBottom_Now = true;
+                    g_Main.Attacker_Damage[player].ShowBottom_Now = 1;
+                    g_Main.Attacker_Damage[player].LastTickTime = DateTime.Now;
+                }
+
+                if (inputParts[0].Split(',').Contains("4"))
+                {
+                    g_Main.Attacker_Damage[player].Show_Center_Now_Server = duration;
+                    g_Main.Attacker_Damage[player].Show_Center_Now = 2;
+                    g_Main.Attacker_Damage[player].LastTickTime = DateTime.Now;
+                }
+
+                if (inputParts[0].Split(',').Contains("5"))
+                {
+                    g_Main.Attacker_Damage[player].ShowBottom_Now_Server = duration;
+                    g_Main.Attacker_Damage[player].ShowBottom_Now = 2;
                     g_Main.Attacker_Damage[player].LastTickTime = DateTime.Now;
                 }
 

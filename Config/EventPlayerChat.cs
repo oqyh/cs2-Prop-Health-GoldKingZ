@@ -34,6 +34,7 @@ public class PlayerChat
                 var entity = ent.Target_Entity;
                 if(entity == null || !entity.IsValid)continue;
                 Helper.RemoveHighlightEnt(entity);
+                ent.Entity_Health_Max = -1;
                 ent.Entity_Health = -1;
                 entity = null;
             }
@@ -51,7 +52,7 @@ public class PlayerChat
                 if(!PropHealthGoldKingZ.Instance.g_Main.Entitys.ContainsKey(entity))
                 {
                     int health = Configs.GetConfigData().Default_Health;
-                    PropHealthGoldKingZ.Instance.g_Main.Entitys.Add(entity, new Globals.GetEnt(entity,null!,health,string.Empty));
+                    PropHealthGoldKingZ.Instance.g_Main.Entitys.Add(entity, new Globals.GetEnt(entity,null!,health,health,string.Empty));
                 }
 
                 if(PropHealthGoldKingZ.Instance.g_Main.Entitys.ContainsKey(entity) && !string.IsNullOrEmpty(entitypath))
@@ -83,6 +84,7 @@ public class PlayerChat
                                 
 
                                 ent.Target_Entity = entity;
+                                ent.Entity_Health_Max = I_health;
                                 ent.Entity_Health  = I_health;
                                 Helper.StartHighlightEnt(ent.Target_Entity);
                             }
