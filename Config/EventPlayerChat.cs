@@ -25,7 +25,7 @@ public class PlayerChat
         {
             if (!string.IsNullOrEmpty(Configs.GetConfigData().Reload_Prop_Settings_Flags) && !Helper.IsPlayerInGroupPermission(player, Configs.GetConfigData().Reload_Prop_Settings_Flags))
             {
-                Helper.AdvancedPlayerPrintToChat(player, Configs.Shared.StringLocalizer!["PrintChatToPlayer.Not.Allowed.ToReload"]);
+                Helper.AdvancedPlayerPrintToChat(player, Configs.Shared.StringLocalizer!["PrintChatToPlayer.Not.Allowed"]);
                 return HookResult.Continue;
             }
             foreach (var ent in PropHealthGoldKingZ.Instance.g_Main.Entitys.Values)
@@ -95,12 +95,12 @@ public class PlayerChat
             Helper.AdvancedPlayerPrintToChat(player, Configs.Shared.StringLocalizer!["PrintChatToPlayer.Plugin.Reloaded"]); 
         }
 
-        string[] Get_Prop_Settings_CommandsInGames = Configs.GetConfigData().Get_Prop_Settings_CommandsInGame.Split(',');
-        if (Get_Prop_Settings_CommandsInGames.Any(cmd => cmd.Equals(message, StringComparison.OrdinalIgnoreCase)))
+        string[] Get_Props_List_CommandsInGames = Configs.GetConfigData().Get_Props_List_CommandsInGame.Split(',');
+        if (Get_Props_List_CommandsInGames.Any(cmd => cmd.Equals(message, StringComparison.OrdinalIgnoreCase)))
         {
-            if (!string.IsNullOrEmpty(Configs.GetConfigData().Get_Prop_Settings_Flags) && !Helper.IsPlayerInGroupPermission(player, Configs.GetConfigData().Get_Prop_Settings_Flags))
+            if (!string.IsNullOrEmpty(Configs.GetConfigData().Get_Props_List_Flags) && !Helper.IsPlayerInGroupPermission(player, Configs.GetConfigData().Get_Props_List_Flags))
             {
-                Helper.AdvancedPlayerPrintToChat(player, Configs.Shared.StringLocalizer!["PrintChatToPlayer.Not.Allowed.ToReload"]);
+                Helper.AdvancedPlayerPrintToChat(player, Configs.Shared.StringLocalizer!["PrintChatToPlayer.Not.Allowed"]);
                 return HookResult.Continue;
             }
             string Fpath = Path.Combine(Configs.Shared.CookiesModule!, $"../../plugins/Prop-Health-GoldKingZ/Props/");
@@ -166,6 +166,59 @@ public class PlayerChat
             }
             
             Helper.AdvancedPlayerPrintToChat(player, Configs.Shared.StringLocalizer!["PrintChatToPlayer.GetProp"], mapname); 
+        }
+
+        string[] Get_Prop_Path_ByShooting_CommandsInGames = Configs.GetConfigData().Get_Prop_Path_ByShooting_CommandsInGame.Split(',');
+        if (Get_Prop_Path_ByShooting_CommandsInGames.Any(cmd => cmd.Equals(message, StringComparison.OrdinalIgnoreCase)))
+        {
+            if (!string.IsNullOrEmpty(Configs.GetConfigData().Get_Prop_Path_ByShooting_Flags) && !Helper.IsPlayerInGroupPermission(player, Configs.GetConfigData().Get_Prop_Path_ByShooting_Flags))
+            {
+                Helper.AdvancedPlayerPrintToChat(player, Configs.Shared.StringLocalizer!["PrintChatToPlayer.Not.Allowed"]);
+                return HookResult.Continue;
+            }
+            if(PropHealthGoldKingZ.Instance.g_Main.Attacker_Damage.ContainsKey(player))
+            {
+                PropHealthGoldKingZ.Instance.g_Main.Attacker_Damage[player].Entity_Debug = !PropHealthGoldKingZ.Instance.g_Main.Attacker_Damage[player].Entity_Debug;
+
+
+                if(PropHealthGoldKingZ.Instance.g_Main.Attacker_Damage[player].Entity_Debug)
+                {
+                    foreach (var ent in PropHealthGoldKingZ.Instance.g_Main.Entitys.Values)
+                    {
+                        if(ent == null)continue;
+                        var entity = ent.Target_Entity;
+                        if(entity == null || !entity.IsValid)continue;
+                        Helper.RemoveHighlightEnt(entity);
+                    }
+                    foreach (var ent in PropHealthGoldKingZ.Instance.g_Main.Entitys.Values)
+                    {
+                        if(ent == null)continue;
+                        var entity = ent.Entity;
+                        if(entity == null || !entity.IsValid)continue;
+                        Helper.StartHighlightEnt(entity,true);
+                    }
+                    Helper.AdvancedPlayerPrintToChat(player, Configs.Shared.StringLocalizer!["PrintChatToPlayer.Prop.Debug.Enabled"]); 
+                }else if(!PropHealthGoldKingZ.Instance.g_Main.Attacker_Damage[player].Entity_Debug)
+                {
+                    foreach (var ent in PropHealthGoldKingZ.Instance.g_Main.Entitys.Values)
+                    {
+                        if(ent == null)continue;
+                        var entity = ent.Entity;
+                        if(entity == null || !entity.IsValid)continue;
+                        Helper.RemoveHighlightEnt(entity);
+                    }
+                    foreach (var ent in PropHealthGoldKingZ.Instance.g_Main.Entitys.Values)
+                    {
+                        if(ent == null)continue;
+                        var entity = ent.Target_Entity;
+                        if(entity == null || !entity.IsValid)continue;
+                        Helper.StartHighlightEnt(entity);
+                    }
+                    Helper.AdvancedPlayerPrintToChat(player, Configs.Shared.StringLocalizer!["PrintChatToPlayer.Prop.Debug.Disabled"]); 
+                }
+            
+            }
+
         }
         return HookResult.Continue;
     }

@@ -139,6 +139,14 @@ public class Helper
     
     public static void ClearVariables()
     {
+        PropHealthGoldKingZ.Instance.g_Main.DisableDamge = false;
+
+        if(PropHealthGoldKingZ.Instance.g_Main.Timer_DisableDamge!=null)
+        {
+            PropHealthGoldKingZ.Instance.g_Main.Timer_DisableDamge.Kill();
+            PropHealthGoldKingZ.Instance.g_Main.Timer_DisableDamge = null!;
+        }
+
         PropHealthGoldKingZ.Instance.g_Main.Entitys.Clear();
         PropHealthGoldKingZ.Instance.g_Main.Attacker_Damage.Clear();
         PropHealthGoldKingZ.Instance.g_Main.JsonData?.Clear();
@@ -239,7 +247,7 @@ public class Helper
         }
     }
 
-    public static void StartHighlightEnt(CEntityInstance Entity)
+    public static void StartHighlightEnt(CEntityInstance Entity, bool debug = false)
     {
         
         if (Entity == null || !Entity.IsValid)return;
@@ -247,21 +255,29 @@ public class Helper
         var entity_model = Entity.As<CBaseModelEntity>();
         if (entity_model == null || !entity_model.IsValid)return;
 
-        string colorstring = Configs.GetConfigData().Prop_Color_Argb;
-        if (colorstring == "-1")return;
-
-        string[] colorParts = colorstring.Split(' ');
-        
-        if (colorParts.Length != 4)
+        if(!debug)
         {
-            DebugMessage("Please Make Prop_Color_Argb In Config Has A r g b Try This Site https://rgbcolorpicker.com/");
-            return;
+            string colorstring = Configs.GetConfigData().Prop_Color_Argb;
+            if (colorstring == "-1")return;
+
+            string[] colorParts = colorstring.Split(' ');
+            
+            if (colorParts.Length != 4)
+            {
+                DebugMessage("Please Make Prop_Color_Argb In Config Has A r g b Try This Site https://rgbcolorpicker.com/");
+                return;
+            }
+            entity_model.Render = Color.FromArgb(int.Parse(colorstring.Split(' ')[0]),
+                                        int.Parse(colorstring.Split(' ')[1]),
+                                        int.Parse(colorstring.Split(' ')[2]),
+                                        int.Parse(colorstring.Split(' ')[3]));
+            Utilities.SetStateChanged(entity_model, "CBaseModelEntity", "m_clrRender");
+        }else
+        {
+            entity_model.Render = Color.FromArgb(255, 0, 0, 255);
+            Utilities.SetStateChanged(entity_model, "CBaseModelEntity", "m_clrRender");
         }
-        entity_model.Render = Color.FromArgb(int.Parse(colorstring.Split(' ')[0]),
-                                    int.Parse(colorstring.Split(' ')[1]),
-                                    int.Parse(colorstring.Split(' ')[2]),
-                                    int.Parse(colorstring.Split(' ')[3]));
-        Utilities.SetStateChanged(entity_model, "CBaseModelEntity", "m_clrRender");
+        
     }
     public static void RemoveHighlightEnt(CEntityInstance Entity)
     {
@@ -307,6 +323,17 @@ public class Helper
             {
                 DebugMessage($"Error downloading file: {ex.Message}");
             }
+        }
+    }
+
+    public static void DisableDamage()
+    {
+        if(PropHealthGoldKingZ.Instance.g_Main.Timer_DisableDamge!=null)
+        {
+            PropHealthGoldKingZ.Instance.g_Main.DisableDamge = false;
+            PropHealthGoldKingZ.Instance.g_Main.Timer_DisableDamge.Kill();
+            PropHealthGoldKingZ.Instance.g_Main.Timer_DisableDamge = null!;
+            AdvancedServerPrintToChatAll(Configs.Shared.StringLocalizer!["PrintToChatToAll.Prop.Damage.Enabled"]); 
         }
     }
 	

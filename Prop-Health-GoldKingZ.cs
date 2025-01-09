@@ -21,7 +21,7 @@ namespace Prop_Health_GoldKingZ;
 public class PropHealthGoldKingZ : BasePlugin
 {
     public override string ModuleName => "Prop Health";
-    public override string ModuleVersion => "1.0.1";
+    public override string ModuleVersion => "1.0.2";
     public override string ModuleAuthor => "Gold KingZ";
     public override string ModuleDescription => "https://github.com/oqyh";
     internal static IStringLocalizer? Stringlocalizer;
@@ -50,6 +50,7 @@ public class PropHealthGoldKingZ : BasePlugin
         RegisterListener<Listeners.OnEntitySpawned>(OnEntitySpawned);
         RegisterEventHandler<EventPlayerConnectFull>(OnEventPlayerConnectFull);
         RegisterEventHandler<EventPlayerDisconnect>(OnPlayerDisconnect);
+        RegisterEventHandler<EventRoundFreezeEnd>(OnEventRoundFreezeEnd);
 
         AddCommandListener("say", OnPlayerChat, HookMode.Post);
         AddCommandListener("say_team", OnPlayerChatTeam, HookMode.Post);
@@ -70,6 +71,21 @@ public class PropHealthGoldKingZ : BasePlugin
         return HookResult.Continue;
     } */
 
+    public HookResult OnEventRoundFreezeEnd(EventRoundFreezeEnd @event, GameEventInfo info)
+    {
+        if (@event == null || Configs.GetConfigData().StartDamageOnStartRoundAfterXSecs == 0 || Helper.IsWarmup())return HookResult.Continue;
+        
+        if(g_Main.Timer_DisableDamge!=null)
+        {
+            g_Main.Timer_DisableDamge.Kill();
+            g_Main.Timer_DisableDamge = null!;
+        }
+        g_Main.DisableDamge = true;
+        g_Main.Timer_DisableDamge = AddTimer(Configs.GetConfigData().StartDamageOnStartRoundAfterXSecs, () => Helper.DisableDamage(),TimerFlags.STOP_ON_MAPCHANGE);
+
+        Helper.AdvancedServerPrintToChatAll(Configs.Shared.StringLocalizer!["PrintToChatToAll.Prop.Damage.Disabled"],Configs.GetConfigData().StartDamageOnStartRoundAfterXSecs); 
+        return HookResult.Continue;
+    }
     public HookResult OnEventPlayerConnectFull(EventPlayerConnectFull @event, GameEventInfo info)
     {
         if (@event == null)return HookResult.Continue;
@@ -79,7 +95,7 @@ public class PropHealthGoldKingZ : BasePlugin
 
         if(!g_Main.Attacker_Damage.ContainsKey(player))
         {
-            g_Main.Attacker_Damage.Add(player, new Globals.GetAttacker(player,0,0,0,0,0,0,DateTime.Now));
+            g_Main.Attacker_Damage.Add(player, new Globals.GetAttacker(player,false,0,0,0,0,0,0,DateTime.Now));
         }
 
         return HookResult.Continue;
@@ -124,15 +140,18 @@ public class PropHealthGoldKingZ : BasePlugin
                 }
                 StringBuilder builder = new StringBuilder();
 
-                string localizeduse;
                 if(playerData.Show_Center_Now == 1)
                 {
-                    localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health", playerData.Entity_Health<1?0:playerData.Entity_Health];
-                }else
+                    string localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health", playerData.Entity_Health<1?0:playerData.Entity_Health];
+                    builder.AppendFormat(localizeduse);
+                    var centerhtml = builder.ToString();
+                    players.PrintToCenterHtml(centerhtml);
+                }else if(playerData.Show_Center_Now == 2)
                 {
                     int health_max = playerData.Entity_Health_Max;
                     int health = playerData.Entity_Health<1?0:playerData.Entity_Health;
                     int roundedHealthPercentage = (int)Math.Round((float)health / health_max * 100);
+                    string localizeduse;
 
                     if (roundedHealthPercentage >= 100)
                     {
@@ -218,10 +237,11 @@ public class PropHealthGoldKingZ : BasePlugin
                     {
                         localizeduse = Configs.Shared.StringLocalizer!["ShowCenter.Prop.Health.0"];
                     }
+                    builder.AppendFormat(localizeduse);
+                    var centerhtml = builder.ToString();
+                    players.PrintToCenterHtml(centerhtml);
                 }
-                builder.AppendFormat(localizeduse);
-                var centerhtml = builder.ToString();
-                players.PrintToCenterHtml(centerhtml);
+                
             }
 
             if(playerData.ShowBottom_Now == 1 || playerData.ShowBottom_Now == 2)
@@ -240,16 +260,19 @@ public class PropHealthGoldKingZ : BasePlugin
                     playerData.LastTickTime = DateTime.Now;
                 }
                 StringBuilder builder = new StringBuilder();
-
-                string localizeduse;
+                
                 if(playerData.ShowBottom_Now == 1)
                 {
-                    localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health", playerData.Entity_Health<1?0:playerData.Entity_Health];
-                }else
+                    string localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health", playerData.Entity_Health<1?0:playerData.Entity_Health];
+                    builder.AppendFormat(localizeduse);
+                    var centerhtml = builder.ToString();
+                    players.PrintToCenter(centerhtml);
+                }else if(playerData.ShowBottom_Now == 2)
                 {
                     int health_max = playerData.Entity_Health_Max;
                     int health = playerData.Entity_Health<1?0:playerData.Entity_Health;
                     int roundedHealthPercentage = (int)Math.Round((float)health / health_max * 100);
+                    string localizeduse;
 
                     if (roundedHealthPercentage >= 100)
                     {
@@ -335,18 +358,14 @@ public class PropHealthGoldKingZ : BasePlugin
                     {
                         localizeduse = Configs.Shared.StringLocalizer!["ShowCenter_Bottom.Prop.Health.0"];
                     }
+                    builder.AppendFormat(localizeduse);
+                    var centerhtml = builder.ToString();
+                    players.PrintToCenter(centerhtml);
                 }
-                
-                builder.AppendFormat(localizeduse);
-                var centerhtml = builder.ToString();
-                players.PrintToCenter(centerhtml);
             }
-
         }
-
     }
-
-
+    
     private HookResult OnPlayerChat(CCSPlayerController? player, CommandInfo info)
     {
         if (player == null || !player.IsValid)return HookResult.Continue;
@@ -441,17 +460,7 @@ public class PropHealthGoldKingZ : BasePlugin
         try
         {
             var ent = hook.GetParam<CEntityInstance>(0);
-            if (ent == null)
-            {
-                return HookResult.Continue;
-            }
-            bool entityExists = g_Main.Entitys.Any(entity =>
-                entity.Value.Target_Entity != null &&
-                entity.Value.Target_Entity.IsValid &&
-                entity.Value.Target_Entity == ent &&
-                entity.Value.Entity_Health != -1
-            );
-            if (!entityExists)
+            if (ent == null || g_Main.DisableDamge)
             {
                 return HookResult.Continue;
             }
@@ -461,6 +470,7 @@ public class PropHealthGoldKingZ : BasePlugin
             {
                 return HookResult.Continue;
             }
+
             var attackerHandle = damageinfo.Attacker?.Value;
             if (attackerHandle == null || !attackerHandle.IsValid)
             {
@@ -472,22 +482,47 @@ public class PropHealthGoldKingZ : BasePlugin
             {
                 return HookResult.Continue;
             }
+
             var player = Utilities.GetPlayerFromIndex((int)playerPawn.Controller.Index);
             if (player == null || !player.IsValid)
             {
                 return HookResult.Continue;
             }
+            
+            if(g_Main.Attacker_Damage.ContainsKey(player) && g_Main.Entitys.ContainsKey(ent))
+            {
+                if(g_Main.Attacker_Damage[player].Entity_Debug && g_Main.Entitys[ent].Entity == ent)
+                {
+                    var getenity = ent.As<CBaseModelEntity>();
+                    var entitypath = getenity.CBodyComponent?.SceneNode?.GetSkeletonInstance().ModelState.ModelName;
+                    if(!string.IsNullOrEmpty(entitypath))
+                    {
+                        Helper.AdvancedPlayerPrintToChat(player, " \x04[Prop-Health] \x0C "+ entitypath);
+                        Helper.DebugMessage(entitypath!);
+                    }
+                    return HookResult.Continue;
+                }
 
-            if(Configs.GetConfigData().Prop_Only_TeamXCanDamage == 1 && player.TeamNum != (byte)CsTeam.CounterTerrorist)
-            {
-                return HookResult.Continue;
-            }else if(Configs.GetConfigData().Prop_Only_TeamXCanDamage == 2 && player.TeamNum != (byte)CsTeam.Terrorist)
-            {
-                return HookResult.Continue;
-            }            
+                bool entityExists = g_Main.Entitys.Any(entity =>
+                    entity.Value.Target_Entity != null &&
+                    entity.Value.Target_Entity.IsValid &&
+                    entity.Value.Target_Entity == ent &&
+                    entity.Value.Entity_Health != -1
+                );
 
-            if(g_Main.Attacker_Damage.ContainsKey(player))
-            {
+                if (!entityExists)
+                {
+                    return HookResult.Continue;
+                }
+                
+                if(Configs.GetConfigData().Prop_Only_TeamXCanDamage == 1 && player.TeamNum != (byte)CsTeam.CounterTerrorist)
+                {
+                    return HookResult.Continue;
+                }else if(Configs.GetConfigData().Prop_Only_TeamXCanDamage == 2 && player.TeamNum != (byte)CsTeam.Terrorist)
+                {
+                    return HookResult.Continue;
+                }
+
                 var damagedone = damageinfo.TotalledDamage;
                 g_Main.Entitys[ent].Entity_Health -= (int)Math.Round(damagedone);
                 g_Main.Attacker_Damage[player].Entity_Health = g_Main.Entitys[ent].Entity_Health;

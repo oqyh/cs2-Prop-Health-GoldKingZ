@@ -1,9 +1,14 @@
 {
-    "PrintChatToPlayer.Not.Allowed.ToReload": "{green}Gold KingZ {grey}| {darkred}You Dont Have Access To This Command.",
+    "PrintChatToPlayer.Not.Allowed": "{green}Gold KingZ {grey}| {darkred}You Dont Have Access To This Command.",
     "PrintChatToPlayer.Plugin.Reloaded": "{green}Gold KingZ {grey}| {lime}Prop Plugin Reloaded!",
+    "PrintChatToPlayer.Prop.Debug.Enabled": "{green}Gold KingZ {grey}| Get Path Props By Shooting Is {lime}Enabled {nextline} {green}Gold KingZ {grey}| Please Shoot Any Blue Prop To Get Prop Path {nextline} {green}Gold KingZ {grey}| Type Same Command To {darkred}Disable It",
+    "PrintChatToPlayer.Prop.Debug.Disabled": "{green}Gold KingZ {grey}| Get Path Props By Shooting Is {darkred}Disabled",
     "PrintChatToPlayer.GetProp": "{green}Gold KingZ {grey}| Getting Props Paths {nextline} {green}Gold KingZ {grey}| For Map: {purple}{0} {nextline} ------------------------------------- {nextline} {green}Gold KingZ {grey}| All Prop Paths Saved In: {nextline} {darkblue} 'Prop-Health-GoldKingZ/Props/Prop_List.txt' {nextline} -------------------------------------",
+    "PrintToChatToAll.Prop.Damage.Disabled": "{green}Gold KingZ {grey}| Props Damage Now {darkred}Disabled {grey}For {lime}{0} Secs",
+    "PrintToChatToAll.Prop.Damage.Enabled": "{green}Gold KingZ {grey}| Props Damage Now {lime}Enabled",
+
     "PrintChatToPlayer.Prop.Health": "{green}Gold KingZ {grey}| Prop Health: {purple}{0}",
-    "ShowCenter.Prop.Health": "<font color='grey'>Prop Health:  <font color='#ff66ff'>{0}",
+    "ShowCenter.Prop.Health": "<font color='grey'>Prop Health: <font color='#ff66ff'>{0}",
     "ShowCenter_Bottom.Prop.Health": "Prop Health: {0}",
 
     "ShowCenter.Prop.Health.100": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛",

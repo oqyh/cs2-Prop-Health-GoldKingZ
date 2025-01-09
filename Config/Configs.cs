@@ -87,9 +87,12 @@ namespace Prop_Health_GoldKingZ.Config
             public string empty { get; set; }
             public string Reload_Prop_Settings_Flags { get; set; }
             public string Reload_Prop_Settings_CommandsInGame { get; set; }
-            public string Get_Prop_Settings_Flags { get; set; }
-            public string Get_Prop_Settings_CommandsInGame { get; set; }
+            public string Get_Props_List_Flags { get; set; }
+            public string Get_Props_List_CommandsInGame { get; set; }
+            public string Get_Prop_Path_ByShooting_Flags { get; set; }
+            public string Get_Prop_Path_ByShooting_CommandsInGame { get; set; }
             public string empty1 { get; set; }
+            public float StartDamageOnStartRoundAfterXSecs  { get; set; }
             public int Default_Health { get; set; }
             public string Prop_Color_Argb { get; set; }
             public int Prop_Only_TeamXCanDamage { get; set; }
@@ -104,9 +107,12 @@ namespace Prop_Health_GoldKingZ.Config
                 empty = "----------------------------[ ↓ Main Configs ↓ ]-------------------------------";
                 Reload_Prop_Settings_Flags = "@css/root,@css/admin";
                 Reload_Prop_Settings_CommandsInGame = "!reloadprop,!reloadprops";
-                Get_Prop_Settings_Flags = "@css/root,@css/admin";
-                Get_Prop_Settings_CommandsInGame = "!getprop,!getprops";
+                Get_Props_List_Flags = "@css/root,@css/admin";
+                Get_Props_List_CommandsInGame = "!getprop,!getprops";
+                Get_Prop_Path_ByShooting_Flags = "@css/root,@css/admin";
+                Get_Prop_Path_ByShooting_CommandsInGame = "!getpropbyshooting,!getpropbyshoot,!gpbs";
                 empty1 = "----------------------------[ ↓ Prop Configs ↓ ]-------------------------------";
+                StartDamageOnStartRoundAfterXSecs = 10;
                 Default_Health = -1;
                 Prop_Color_Argb = "255 0 0 255";
                 Prop_Only_TeamXCanDamage = 2;
