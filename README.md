@@ -2,7 +2,7 @@
 <a href="https://discord.com/invite/U7AuQhu"><img src="https://discord.com/api/guilds/651838917687115806/widget.png?style=banner2"></a>
 
 ***
-# [CS2] Prop-Health-GoldKingZ (1.0.1)
+# [CS2] Prop-Health-GoldKingZ (1.0.2)
 
 ### Prop Health
 
@@ -35,13 +35,23 @@
   //Command In Game To Reload Prop_Settings.json
   "Reload_Prop_Settings_CommandsInGame": "!reloadprop,!reloadprops",
 
-  //Who Can Access To Get Props Paths
-  "Get_Prop_Settings_Flags": "@css/root,@css/admin",
+  //Who Can Access To Get Props Paths List
+  "Get_Props_List_Flags": "@css/root,@css/admin",
 
-  //Command In Game To Get Props Paths
-  "Get_Prop_Settings_CommandsInGame": "!getprop,!getprops",
+  //Command In Game To Get Props Paths List
+  "Get_Props_List_CommandsInGame": "!getprop,!getprops",
+
+  //Who Can Access To Get Props Paths By Shooting
+  "Get_Prop_Path_ByShooting_Flags": "@css/root,@css/admin",
+
+  //Command In Game To Get Props Paths By Shooting
+  "Get_Prop_Path_ByShooting_CommandsInGame": "!getpropbyshooting,!getpropbyshoot,!gpbs",
 
 //----------------------------[ ↓ Prop Configs ↓ ]-------------------------------
+
+  //Start Damage OnStart Round After X Secs 
+  //(0) = Disabled
+  "StartDamageOnStartRoundAfterXSecs": 10,
 
   //If Not Found Prop_Health In Prop_Settings.json What Default Health Will Be
   //(-1) = Doesnt break
@@ -92,17 +102,77 @@
 	//{nextline} = Print On Next Line
 	//==========================
 	
-    "PrintChatToPlayer.Not.Allowed.ToReload": "{green}Gold KingZ {grey}| {darkred}You Dont Have Access To This Command.",
+    "PrintChatToPlayer.Not.Allowed": "{green}Gold KingZ {grey}| {darkred}You Dont Have Access To This Command.",
     "PrintChatToPlayer.Plugin.Reloaded": "{green}Gold KingZ {grey}| {lime}Prop Plugin Reloaded!",
-    "PrintChatToPlayer.GetProp": "{green}Gold KingZ {grey}| Getting Props Paths {nextline} {green}Gold KingZ {grey}| For Map: {purple}{0} {nextline} ------------------------------------- {nextline} {green}Gold KingZ {grey}| All Prop Paths Saved In: {nextline} {darkblue} 'Prop-Health-GoldKingZ/Props/Prop_List.txt' {nextline} -------------------------------------", //{0} = Map Name
-    "PrintChatToPlayer.Prop.Health": "{green}Gold KingZ {grey}| Prop Health: {purple}{0}", //{0} = Prop Health
-    "ShowCenter.Prop.Health": "<font color='grey'>Prop Health:  <font color='#ff66ff'>{0}", //{0} = Prop Health
-    "ShowCenter_Bottom.Prop.Health": "Prop Health: {0}" //{0} = Prop Health
+    "PrintChatToPlayer.Prop.Debug.Enabled": "{green}Gold KingZ {grey}| Get Path Props By Shooting Is {lime}Enabled {nextline} {green}Gold KingZ {grey}| Please Shoot Any Blue Prop To Get Prop Path {nextline} {green}Gold KingZ {grey}| Type Same Command To {darkred}Disable It",
+    "PrintChatToPlayer.Prop.Debug.Disabled": "{green}Gold KingZ {grey}| Get Path Props By Shooting Is {darkred}Disabled",
+    "PrintChatToPlayer.GetProp": "{green}Gold KingZ {grey}| Getting Props Paths {nextline} {green}Gold KingZ {grey}| For Map: {purple}{0} {nextline} ------------------------------------- {nextline} {green}Gold KingZ {grey}| All Prop Paths Saved In: {nextline} {darkblue} 'Prop-Health-GoldKingZ/Props/Prop_List.txt' {nextline} -------------------------------------",
+    "PrintToChatToAll.Prop.Damage.Disabled": "{green}Gold KingZ {grey}| Props Damage Now {darkred}Disabled {grey}For {lime}{0} Secs",
+    "PrintToChatToAll.Prop.Damage.Enabled": "{green}Gold KingZ {grey}| Props Damage Now {lime}Enabled",
+
+    "PrintChatToPlayer.Prop.Health": "{green}Gold KingZ {grey}| Prop Health: {purple}{0}",
+    "ShowCenter.Prop.Health": "<font color='grey'>Prop Health: <font color='#ff66ff'>{0}",
+    "ShowCenter_Bottom.Prop.Health": "Prop Health: {0}",
+
+    "ShowCenter.Prop.Health.100": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛",
+    "ShowCenter.Prop.Health.95": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜",
+    "ShowCenter.Prop.Health.90": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜",
+    "ShowCenter.Prop.Health.85": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜",
+    "ShowCenter.Prop.Health.80": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.75": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.70": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.65": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.60": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.55": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.50": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.45": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.40": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.35": "<font color='white'>⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.30": "<font color='white'>⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.25": "<font color='white'>⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.20": "<font color='white'>⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.15": "<font color='white'>⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.10": "<font color='white'>⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.5": "<font color='white'>⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter.Prop.Health.0": "<font color='white'>⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+
+
+    "ShowCenter_Bottom.Prop.Health.100": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛",
+    "ShowCenter_Bottom.Prop.Health.95": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜",
+    "ShowCenter_Bottom.Prop.Health.90": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.85": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.80": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.75": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.70": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.65": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.60": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.55": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.50": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.45": "⬛⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.40": "⬛⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.35": "⬛⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.30": "⬛⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.25": "⬛⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.20": "⬛⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.15": "⬛⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.10": "⬛⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.5": "⬛⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜",
+    "ShowCenter_Bottom.Prop.Health.0": "⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜⬜"
+
 }
 ```
 
 ## .:[ Change Log ]:.
 ```
+(1.0.2)
+-Fix Apear Bar To Style 2 and 3
+-Change Get_Prop_Settings_Flags To  Get_Props_List_Flags
+-Change Get_Prop_Settings_CommandsInGame To  Get_Props_List_CommandsInGame
+-Change rename Get_Props_List_Flags
+-Added Get_Prop_Path_ByShooting_Flags
+-Added Get_Prop_Path_ByShooting_CommandsInGame
+-Added StartDamageOnStartRoundAfterXSecs
+
 (1.0.1)
 -Added Prop_Damge_Print 4 Center (Bar Icon)
 -Added Prop_Damge_Print 5 Bottom Center (Bar Icon)
